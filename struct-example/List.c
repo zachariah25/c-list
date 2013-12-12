@@ -555,6 +555,7 @@ List* copyListWithCapacity(List* list, int newCapacity) {
 }
 
 void grow(List* list) {
+	printf("%d\n", sizeof(type) * list->capacity * RESIZEFACTOR);
 	type* newData = (type*) realloc(list->data,
 		sizeof(type) * list->capacity * RESIZEFACTOR );
 
