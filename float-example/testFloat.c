@@ -27,11 +27,30 @@ char* printFloat(const void* element) {
 }
 
 int main() {
-	int arr[] = {1,3,2};
-	//List* list = arrayToList(arr, 3);
-	List* list = sizeNList(10);
-	printList(list, printFloat);
-	sort(list, ascend);
+	List* list = makeList();
+	// Set a print function so that we may call printList
+	setPrintFun(list, printFloat);
+	printList(list);
 
+	// Add ten elements
+	for (int i = 0; i < 9; ++i) {
+		append(list, 5.0);
+	}
+
+	// Force a resize
+	append(list, 1.5);
+	append(list, 9.3);
+	append(list, 3.5);
+	
+	// Print the list in its current state
+	printList(list);
+
+	// Sort the list, using the comparison function we set
+	setCmpFun(list, ascend);
+	sort(list);
+	printList(list);
+
+	// It's the caller's responsibility to call this
+	cleanupList(list);
 	return EXIT_SUCCESS;
 }

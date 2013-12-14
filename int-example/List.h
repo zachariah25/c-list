@@ -139,6 +139,13 @@ int count(List* list, type element);
 ///////////// Utilities ///////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
+/* Exits and prints a debug message if the comparison function is null */
+/* @param fun the name of the function that will be called afterward */
+void checkCmpFun(List* list, char* fun);
+
+/* Exits and prints a debug message if the print function is null */
+void checkPrintFun(List* list);
+
 /* Returns the number of elements in the list */
 int size(List* list);
 

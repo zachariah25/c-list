@@ -21,7 +21,9 @@ List* makeList() {
 	}
 	list->size = 0;
 	list->capacity = DEFAULTCAPACITY;
-	list->data = (type*) malloc(sizeof(type*) * list->capacity);
+	list->data = (type*) malloc(sizeof(type) * list->capacity);
+	list->cmp = NULL;
+	list->print = NULL;
 	if (!list->data) {
 		fprintf(stderr, "Malloc failed in makeList\n");
 		free(list);
@@ -38,7 +40,9 @@ List* makeListWithCapacity(int capacity) {
 	}
 	list->size = 0;
 	list->capacity = capacity;
-	list->data = (type*) malloc(sizeof(type*) * list->capacity);
+	list->data = (type*) malloc(sizeof(type) * list->capacity);
+	list->cmp = NULL;
+	list->print = NULL;
 	if (!list->data) {
 		fprintf(stderr, "Malloc failed in makeListWithCapacity\n");
 		free(list);
@@ -133,8 +137,8 @@ void insertList(List* dest, int index, List* src) {
 		dest->size += src->size;
 	}
 	else {
-		//fprintf(stderr, "Invalid index for insertList for size %i list: %i\n",
-		//	index, dest->size);
+		fprintf(stderr, "Invalid index for insertList for size %i list: %i\n",
+			index, dest->size);
 		cleanupList(dest);
 		cleanupList(src);
 		exit(EXIT_FAILURE);
@@ -200,7 +204,7 @@ void removeRange(List* list, int start, int end) {
 		}
 	}
 	else {
-		fprintf(stderr, "Invalid indicies for removeRange: %i and %i\n", start, end);
+		fprintf(stderr, "Invalid indices for removeRange: %i and %i\n", start, end);
 		cleanupList(list);
 		exit(EXIT_FAILURE);
 	}
@@ -344,10 +348,7 @@ List* sliceWithStep(List* list, int start, int end, int step) {
 }
 
 int indexOf(List* list, type element) {
-	if (list->cmp == NULL) {
-		fprintf(stderr, "Cannot get indexOf: comparison function not defined\n");
-		exit(EXIT_FAILURE);
-	}
+	checkCmpFun(list, "indexOf");
 	for (int i = 0; i < list->size; ++i) {
 		if (list->cmp((const void*) &list->data[i], (const void*) &element) == 0) {
 			return i;
@@ -357,6 +358,7 @@ int indexOf(List* list, type element) {
 }
 
 int lastIndexOf(List* list, type element) {
+	checkCmpFun(list, "lastIndexOf");
 	for (int i = list->size - 1; i >= 0; --i) {
 		if (list->cmp((const void*) &list->data[i], (const void*) &element) == 0) {
 			return i;
@@ -366,6 +368,7 @@ int lastIndexOf(List* list, type element) {
 }
 
 int contains(List* list, type element) {
+	checkCmpFun(list, "contains");
 	for (int i = 0; i < list->size; ++i) {
 		if (list->cmp((const void*) &list->data[i], (const void*) &element) == 0) {
 			return 1;
@@ -375,6 +378,7 @@ int contains(List* list, type element) {
 }
 
 int count(List* list, type element) {
+	checkCmpFun(list, "count");
 	int count = 0;
 	for (int i = 0; i < list->size; ++i) {
 		if (list->cmp((const void*) &list->data[i], (const void*) &element) == 0) {
@@ -387,6 +391,23 @@ int count(List* list, type element) {
 ///////////////////////////////////////////////////////////////////////////////
 ///////////// Utilities ///////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+
+inline void checkCmpFun(List* list, char* fun) {
+	if (list->cmp == NULL) {
+		fprintf(stderr, "Cannot call %s without comparison function (use setCmpFun)\n", fun);
+		cleanupList(list);
+		exit(EXIT_FAILURE);
+	}
+}
+
+inline void checkPrintFun(List* list) {
+	if (list->print == NULL) {
+		fprintf(stderr, "Cannot print without print function (use setPrintFun)\n");
+		cleanupList(list);
+		exit(EXIT_FAILURE);
+	}
+}
+
 
 int size(List* list) {
 	return list->size;
@@ -401,6 +422,7 @@ int isEmpty(List* list) {
 }
 
 int equals(List* list1, List* list2) {
+	checkCmpFun(list1, "equals");
 	if (list1->size != list2->size || list1->capacity != list2->capacity) {
 		return 0;
 	}
@@ -414,9 +436,10 @@ int equals(List* list1, List* list2) {
 }
 
 int equalsArray(List* list, type* arr) {
+	checkCmpFun(list, "equalsArray");	
 	for (int i = 0; i < list->size; ++i) {
 		if (list->cmp((const void*) &list->data[i], 
-			          (const void*) &arr[i]) != 0) {
+			      (const void*) &arr[i]) != 0) {
 			return 0;
 		}
 	}
@@ -441,12 +464,7 @@ List* arrayToList(type* arr, int nmemb) {
 }
 
 void printList(List* list) {
-	if (list->print == NULL) {
-		fprintf(stderr, "Cannot print without print function (use setPrintFun)\n");
-		cleanupList(list);
-		exit(EXIT_FAILURE);
-	}
-
+	checkPrintFun(list);
 	printf("[");
 	for (int i = 0; i < list->size; ++i) {
 		if (i == list->size - 1) {
@@ -460,11 +478,7 @@ void printList(List* list) {
 }
 
 void sort(List* list) {
-	if (list->cmp == NULL) {
-		fprintf(stderr, "Cannot sort without comparison function (use setCmpFun)\n");
-		cleanupList(list);
-		exit(EXIT_FAILURE);
-	}
+	checkCmpFun(list, "sort");
 	qsort(list->data, (size_t) list->size,
  	(size_t) sizeof(list->data[0]), list->cmp);
 	

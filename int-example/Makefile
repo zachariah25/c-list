@@ -1,5 +1,5 @@
 #
-# Created by gmakemake (Ubuntu Sep  7 2011) on Wed Dec 11 22:31:34 2013
+# Created by gmakemake (Ubuntu Sep  7 2011) on Sat Dec 14 15:47:36 2013
 #
 
 #
@@ -49,7 +49,7 @@ CFLAGS = 	-ggdb -Wall -std=c99
 
 
 CPP_FILES =	
-C_FILES =	List.c interp.c
+C_FILES =	List.c interp.c test.c
 PS_FILES =	
 S_FILES =	
 H_FILES =	List.h ListConfig.h
@@ -61,10 +61,13 @@ OBJFILES =	List.o
 # Main targets
 #
 
-all:	interp 
+all:	interp test 
 
 interp:	interp.o $(OBJFILES)
 	$(CC) $(CFLAGS) -o interp interp.o $(OBJFILES) $(CLIBFLAGS)
+
+test:	test.o $(OBJFILES)
+	$(CC) $(CFLAGS) -o test test.o $(OBJFILES) $(CLIBFLAGS)
 
 #
 # Dependencies
@@ -72,6 +75,7 @@ interp:	interp.o $(OBJFILES)
 
 List.o:	List.h ListConfig.h
 interp.o:	List.h ListConfig.h
+test.o:	List.h ListConfig.h
 
 #
 # Housekeeping
@@ -83,7 +87,7 @@ archive.tgz:	$(SOURCEFILES) Makefile
 	tar cf - $(SOURCEFILES) Makefile | gzip > archive.tgz
 
 clean:
-	-/bin/rm $(OBJFILES) interp.o core 2> /dev/null
+	-/bin/rm $(OBJFILES) interp.o test.o core 2> /dev/null
 
 realclean:        clean
-	-/bin/rm -rf interp 
+	-/bin/rm -rf interp test 

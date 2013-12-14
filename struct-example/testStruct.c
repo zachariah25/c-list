@@ -32,23 +32,29 @@ char* printStruct(const void* element) {
 
 int main() {
 	List* list = makeList();
+	// Set a comparison function so that we may call printList
 	setPrintFun(list, printStruct);
-	setCmpFun(list, ascend);
 	printList(list);
-	printf("made it\n");
+
+	// Add ten elements
 	for (int i = 0; i < 9; ++i) {
-		printf("here %d", i);
 		append(list, (myStruct) {i, i * 5.0});
 	}
-	printf("1\n");
+
+	// Force a resize
 	append(list, (myStruct) {5, 1.5});
-	printf("2\n");
 	append(list, (myStruct) {8, 9.3});
-	printf("3\n");
 	append(list, (myStruct) {1, 3.5});
-	//printList(list);
+	
+	// Print the list in its current state
+	printList(list);
+
+	// Sort the list, using the comparison function we set
+	setCmpFun(list, ascend);
 	sort(list);
 	printList(list);
 
+	// It's the caller's responsibility to call this
+	cleanupList(list);
 	return EXIT_SUCCESS;
 }
