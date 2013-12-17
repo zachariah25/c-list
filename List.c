@@ -20,7 +20,7 @@ List* makeList() {
 	}
 	list->size = 0;
 	list->capacity = DEFAULTCAPACITY;
-	list->data = (type*) malloc(sizeof(type*) * list->capacity);
+	list->data = (type*) malloc(sizeof(type) * list->capacity);
 	if (!list->data) {
 		fprintf(stderr, "Malloc failed in makeList\n");
 		free(list);
@@ -37,7 +37,7 @@ List* makeListWithCapacity(int capacity) {
 	}
 	list->size = 0;
 	list->capacity = capacity;
-	list->data = (type*) malloc(sizeof(type*) * list->capacity);
+	list->data = (type*) malloc(sizeof(type) * list->capacity);
 	if (!list->data) {
 		fprintf(stderr, "Malloc failed in makeListWithCapacity\n");
 		free(list);
@@ -556,6 +556,11 @@ List* copyListWithCapacity(List* list, int newCapacity) {
 void grow(List* list) {
 	type* newData = (type*) realloc(list->data,
 		sizeof(type) * list->capacity * RESIZEFACTOR );
+	
+	#ifdef POINTERS
+	// Reallocing will copy over the pointers, so we must now free the old ones
+	//cleanupOldPointers(list);
+	#endif
 
 	if (newData != NULL) {
 		list->data = newData;
@@ -634,20 +639,22 @@ void shrink(List* list) {
 }
 
 void cleanupList(List* list) {
+	#ifdef POINTERS
+	for (int i = 0; i < list->size; ++i) {
+		free(list->data[i]);
+	}
+	#endif
 	free(list->data);
 	free(list);
 }
 
-void cleanupListPointers(List* list) {
-	for (int i = 0; i < list->size; ++i) {
-		free(list->data[i]);
-	}
-	free(list);
-}
 
+#ifdef POINTERS
 void cleanupListFun(List* list, void (*freeFun)(void*)) {
 	for (int i = 0; i < list->size; ++i) {
-		freeFun(list->data[i]);
+		freeFun((void*) list->data[i]);
 	}
+	free(list->data);
 	free(list);
 }
+#endif

@@ -1,5 +1,5 @@
 #
-# Created by gmakemake (Ubuntu Sep  7 2011) on Sat Dec 14 15:47:36 2013
+# Created by gmakemake (Ubuntu Sep  7 2011) on Mon Dec 16 18:58:57 2013
 #
 
 #
@@ -49,7 +49,7 @@ CFLAGS = 	-ggdb -Wall -std=c99
 
 
 CPP_FILES =	
-C_FILES =	List.c interp.c test.c
+C_FILES =	List.c interp.c speed.c test.c
 PS_FILES =	
 S_FILES =	
 H_FILES =	List.h ListConfig.h
@@ -61,10 +61,13 @@ OBJFILES =	List.o
 # Main targets
 #
 
-all:	interp test 
+all:	interp speed test 
 
 interp:	interp.o $(OBJFILES)
 	$(CC) $(CFLAGS) -o interp interp.o $(OBJFILES) $(CLIBFLAGS)
+
+speed:	speed.o $(OBJFILES)
+	$(CC) $(CFLAGS) -o speed speed.o $(OBJFILES) $(CLIBFLAGS)
 
 test:	test.o $(OBJFILES)
 	$(CC) $(CFLAGS) -o test test.o $(OBJFILES) $(CLIBFLAGS)
@@ -75,6 +78,7 @@ test:	test.o $(OBJFILES)
 
 List.o:	List.h ListConfig.h
 interp.o:	List.h ListConfig.h
+speed.o:	List.h ListConfig.h
 test.o:	List.h ListConfig.h
 
 #
@@ -87,7 +91,7 @@ archive.tgz:	$(SOURCEFILES) Makefile
 	tar cf - $(SOURCEFILES) Makefile | gzip > archive.tgz
 
 clean:
-	-/bin/rm $(OBJFILES) interp.o test.o core 2> /dev/null
+	-/bin/rm $(OBJFILES) interp.o speed.o test.o core 2> /dev/null
 
 realclean:        clean
-	-/bin/rm -rf interp test 
+	-/bin/rm -rf interp speed test 

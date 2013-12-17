@@ -217,4 +217,9 @@ void shrink(List* list);
 /* Delete a list, freeing all memory allocated to it */
 void cleanupList(List* list);
 
+#ifdef POINTERS
+/* Delete a list, calling the given function on each slot */
+void cleanupListFun(List* list, void (*fun)(void*));
+#endif
+
 #endif

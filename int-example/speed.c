@@ -11,7 +11,7 @@ description: speed test
 int main() {
 	List* list = makeList();
 
-	for (int i = 0; i < 100000; ++i) {
+	for (int i = 0; i < 100000000; ++i) {
 		append(list, i);
 	}
 
