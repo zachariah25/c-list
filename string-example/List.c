@@ -146,6 +146,9 @@ void insertList(List* dest, int index, List* src) {
 
 void removeIndex(List* list, int index) {
 	if (index >= 0 && index < list->size) {
+		#ifdef POINTERS
+		free(list->data[index]);
+		#endif
 		for ( ; index < list->size - 1; ++index) {
 			list->data[index] = list->data[index + 1];
 		}
@@ -161,6 +164,9 @@ void removeIndex(List* list, int index) {
 
 void pop(List* list) {
 	if (list->size > 0) {
+		#ifdef POINTERS
+		free(list->data[list->size]);
+		#endif
 		reduceSize(list);
 	}
 	else {
@@ -189,6 +195,9 @@ void removeRange(List* list, int start, int end) {
 	if (start >= 0 && end <= list->size && end >= start) {
 		// Copy over data into now invalid spots
 		for (int i = 0; end + i < list->size; ++i) {
+			#ifdef POINTERS
+			free(list->data[start + i]);
+			#endif
 			list->data[start + i] = list->data[end + i];
 		}
 		// Reduce list's size accordingly
@@ -206,6 +215,11 @@ void removeRange(List* list, int start, int end) {
 }
 
 void clear(List* list) {
+	#ifdef POINTERS
+	for (int i = 0; i < list->size; ++i) {
+		free(list->data[i]);
+	}
+	#endif
 	list->size = 0;
 	trimToSize(list);
 }
@@ -486,6 +500,7 @@ void trimToSize(List* list) {
 	if (list->size == list->capacity) {
 		return;
 	}
+	
 	type* newData;
 	if (list->size > 0) {
 		newData = (type*) realloc(list->data, sizeof(type) * list->size);

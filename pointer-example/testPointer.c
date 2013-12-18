@@ -48,7 +48,7 @@ int main() {
 	printList(list);
 
 	// Add ten elements
-	for (int i = 0; i < 100; ++i) {
+	for (int i = 0; i < 10; ++i) {
 		myStruct* el = mkMyStruct(i, i * 5.0);
 		append(list, el);
 	}
@@ -56,16 +56,26 @@ int main() {
 	// Force a resize
 	myStruct* a = mkMyStruct(5, 1.5);
 	myStruct* b = mkMyStruct(8, 9.3);
-	myStruct* c = mkMyStruct(1, 3.5);
+	myStruct* c = mkMyStruct(15, 3.5);
 	append(list, a);
 	append(list, b);
 	append(list, c);
+
+	printList(list);
+	// Try out removeElement
+	setCmpFun(list, ascend);
+	printf("Removing {15, 3.5}\n");
+	removeElement(list, c);
+	printList(list);
+	// Remove index
+	printf("Removing index 0\n");
+	removeIndex(list, 0);
+	printList(list);
 	
 	// Print the list in its current state
 	printList(list);
 
 	// Sort the list, using the comparison function we set
-	setCmpFun(list, ascend);
 	sort(list);
 	printList(list);
 
