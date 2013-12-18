@@ -1,0 +1,13 @@
+#!/bin/sh
+
+cp List.c int-example/
+cp List.c float-example/
+cp List.c struct-example/
+cp List.c string-example/
+cp List.c pointer-example/
+
+cp List.h int-example/
+cp List.h float-example/
+cp List.h struct-example/
+cp List.h string-example/
+cp List.h pointer-example/

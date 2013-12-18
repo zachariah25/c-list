@@ -3,8 +3,6 @@ file: List.h
 author: Zach Lauzon (zrl3031@rit.edu)
 description: header file for a Python-like List, implemented as a dynamic array
 TODO: Sort, awesome documentation
-TODO: What about when the list is empty? Memory management becomes tricky
-because you can't realloc to 0 bytes
 */
 
 #ifndef LIST_H
