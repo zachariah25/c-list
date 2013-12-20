@@ -18,76 +18,140 @@ TODO: Sort, awesome documentation
 // (e.g. newCapacity = oldCapacity * resizeFactor)
 #define RESIZEFACTOR 2
 
-// The type of the list's data (should be able to change without effect)
+// This file contains the type of the data the list will store (as ListType)
 #include "ListConfig.h"
 typedef ListType type;
 
 typedef struct {
-	int size;		// The number of elements present in the list
-	int capacity;	// The number the size can grow to without resizing
-	type* data;		// A pointer to the array of data contained in the list
-	int (*cmp) (const void*, const void*); // Comparison function (optional)
-	char* (*print) (const void* element); // Print function (optional)
+    int size;       // The number of elements present in the list
+    int capacity;   // The number the size can grow to without resizing
+    type* data;     // A pointer to the array of data contained in the list
+    int (*cmp) (const void*, const void*); // Comparison function (optional)
+    char* (*print) (const void* element); // Print function (optional)
 } List;
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////// Constructors ////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-/* Initialize a list with the default capacity */
+/** Initialize a list with the default capacity.
+  * 
+  * @return a pointer to the newly allocated List
+  */
 List* makeList();
 
-/* Initialize a list with an initial capacity */
-List* makeListWithCapacity();
+/** Initialize a list with the specified capacity.
+  * 
+  * @param capacity the capacity for the list to begin with
+  * @return a pointer to the newly allocated List
+  */
+List* makeListWithCapacity(int capacity);
 
-/* Sets the comparison function */
+/** Sets the comparison function that the list will use. Only necessary if 
+  * functions like sort, count, indexOf, etc. will be called.
+  * 
+  * @param int (const void*, const void*) - the comparison function that will
+  *     be used to compare elements in the list. It should return -1, 0, 1, if
+  *     the the first element is less than, equal to, or greater than the 
+  *     second, respectively.
+  */
 void setCmpFun(List* list, int (const void*, const void*));
 
-/* Sets the print function */
+/** Sets the comparison function that the list will use. Only necessary if
+  * printList will be called.
+  * 
+  * @param char* (const void*) - the function that will called on each element
+  *      contained within the list, which should return a C string
+  *      representation of that element.
+  */
 void setPrintFun(List* list, char* (const void*));
 
-/* Initialize a list with values equal to their indices (only works when type
-is integers */
+/** Initialize a list with values equal to their indices (only works when type
+  * is int).
+  * 
+  * @param n the size of the list to create
+  * @return a pointer to the newly allocated list
+  */
 List* sizeNList(int n);
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////// Insertion ///////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-// Note: these functions should call grow() if the list becomes full
 
-/* Appends an element to the end of the list */
+/// All insertion routines will cause a realloc if the list's size meets its
+/// capacity, multiplying the capacity by RESIZEFACTOR.
+
+/** Appends an element to the end of the list.
+  * 
+  * @param list the list to append to
+  * @param element the element to append
+  */
 void append(List* list, type element);
 
-/* Appends the contents of source to destination */
+/** Appends each element of the source list to the destination list.
+  * 
+  * @param destination the list to append to
+  * @param source the list to retrieve elements from
+  */
 void appendList(List* destination, List* source);
 
-/* Inserts an element at a specific index */
+/** Inserts an element at the specified index.
+  * 
+  * @param list the list to insert into
+  * @param index the index to insert at (0 <= index < size(list))
+  * @param element the element to insert
+  */
 void insert(List* list, int index, type element);
 
-/* Inserts the contents of source to destination at the specified index */
+/** Inserts each element of the source list into the destination list at the 
+  * specified index.
+  * 
+  * @param destination the list to insert into
+  * @param index the index to insert at (0 <= index <= size(list))
+  * @param source the list to retrieve elements from
+  */
 void insertList(List* destination, int index, List* source);
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////// Deletion ////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-// Note: these functions should call shrink() if the list becomes more than
-// half empty
 
-/* Remove an element at a specific index of the list */
+/// For all deletion functions, if the POINTERS flag in ListConfig.h is set,
+/// the element(s) being deleted will be freed prior to their removal.
+/// They will also cause a realloc if less than (1 / RESIZEFACTOR) of the
+/// list's capacity is occupied, such that (1 / RESIZEFACTOR) is occupied.
+
+/** Remove the element at the specified index of the list.
+  * 
+  * @param list the list to remove an element from
+  * @param index the index to remove (0 <= index < size(list))
+  */
 void removeIndex(List* list, int index);
 
-/* Remove the last element from the list */
+/** Remove the last element from the list.
+  * 
+  * @param list the list to pop from
+  */
 void pop(List* list);
 
-/* Remove the first instance of an element from the list, if it exists */
-/* If the list contained the element, returns 1, 0 otherwise */
+/** Removes the first instance of an element from the list, if it exists.
+  * 
+  * @param list the list to remove the element from
+  * @param element the element to remove 
+  * @return 1 on success, 0 on failure (the element was not found)
+  */
 int removeElement(List* list, type element);
 
-/* Remove elements between start (inclusive) to end (exclusive) 
-from the list */
+/** Removes all elements between start (inclusive) to end (exclusive).
+  * 
+  * @param list the list to remove elements from
+  * @param start the beginning of the range to remove (inclusive)
+  * @param end the end of the range to remove (exclusive)
+  */
 void removeRange(List* list, int start, int end);
 
-/* Makes all elements of the list inaccessible, resizing if necessary */
+/** Removes all of the elements from the list.
+  */
 void clear(List* list);
 
 /* Reduces the size of the list, resizing if necessary */
