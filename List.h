@@ -98,8 +98,9 @@ void appendList(List* destination, List* source);
 /** Inserts an element at the specified index.
   * 
   * @param list the list to insert into
-  * @param index the index to insert at (0 <= index < size(list))
+  * @param index the index to insert at
   * @param element the element to insert
+  * @pre 0 <= index <= size(list)
   */
 void insert(List* list, int index, type element);
 
@@ -107,8 +108,9 @@ void insert(List* list, int index, type element);
   * specified index.
   * 
   * @param destination the list to insert into
-  * @param index the index to insert at (0 <= index <= size(list))
+  * @param index the index to insert at
   * @param source the list to retrieve elements from
+  * @pre 0 <= index <= size(list)
   */
 void insertList(List* destination, int index, List* source);
 
@@ -124,7 +126,8 @@ void insertList(List* destination, int index, List* source);
 /** Remove the element at the specified index of the list.
   * 
   * @param list the list to remove an element from
-  * @param index the index to remove (0 <= index < size(list))
+  * @param index the index to remove
+  * @pre 0 <= index < size(list)
   */
 void removeIndex(List* list, int index);
 
@@ -151,30 +154,65 @@ int removeElement(List* list, type element);
 void removeRange(List* list, int start, int end);
 
 /** Removes all of the elements from the list.
+  *
+  * @param list the list to remove every element from
   */
 void clear(List* list);
 
-/* Reduces the size of the list, resizing if necessary */
+/** Reduces the size of the list by one, causing a realloc if necessary.
+  * (internal use only)
+  *
+  * @param list the list whose size shall be reduced
+  */
 void reduceSize(List* list);
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////// Access / Retrieval //////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-/* Return a single element of a list */
+/** Return the element at the specified index of the list.
+  *
+  * @param list the list to retrieve an element from
+  * @param index the index to return
+  * @return the element at the given index
+  * @pre 0 <= index < size(list)
+  */
 type get(List* list, int index);
 
-/* Replaces the value at the specified index with the specified element 
-NOTE: crash if outside capacity, but what about index > size && < capacity?*/
+/** Replaces the value at the specified index with the given element.
+  * TODO: should this free the element that was replaced if POINTERS is set?
+  *
+  * @param list the list to modify 
+  * @param index the index to change
+  * @param element the element to set the index to
+  * @pre 0 <= index < size(list)
+  */
 void set(List* list, int index, type element);
 
-/* Swaps the element at index1 with the element at index2 */
+/** Swaps the element at index1 with the element at index2.
+  *
+  * @param list the list to modify 
+  * @param index1 the first index to change
+  * @param index2 the second index to change
+  * @pre 0 <= index1 < size(list)
+  * @pre 0 <= index2 < size(list)
+  */
 void swap(List* list, int index1, int index2);
 
-/* Return the first element */
+/** Return the first element of the list (at the 0th index).
+  *
+  * @param list the list to retrieve an element from
+  * @return the element at the 0th index of the list
+  * @pre size(list) > 0
+  */
 type front(List* list);
 
-/* Return the last element */
+/** Return the last element of the list (at the size(list) - 1th index).
+  *
+  * @param list the list to retrieve an element from
+  * @return the element at the last index of the list
+  * @pre size(list) > 0
+  */
 type back(List* list);
 
 /* Copy a specific section of the source list, from start (inclusive) to end
